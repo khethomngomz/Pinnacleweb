@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinnacle Rewards</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #0a0a0f;
+        }
+
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #0a0a0f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #loader-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #skip-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 48px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 10px 26px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 40px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: background 0.2s, border-color 0.2s;
+            opacity: 0;
+            animation: fadeInBtn 0.6s ease 1.2s forwards;
+        }
+
+        #skip-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        #progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #8348ff, #c084fc);
+            transition: width 0.25s linear;
+            z-index: 10;
+        }
+
+        @keyframes fadeInBtn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="preloader">
+        <video id="loader-video" autoplay muted playsinline preload="auto">
+            <source src="bizox-html-package/Bizox/assets/pinnacleassets/loader2.mp4" type="video/mp4">
+        </video>
+        <div id="progress-bar"></div>
+        <button id="skip-btn" onclick="redirect()">Skip intro</button>
+    </div>
+
+    <script>
+        const video    = document.getElementById('loader-video');
+        const loader   = document.getElementById('preloader');
+        const progress = document.getElementById('progress-bar');
+        const dest     = 'bizox-html-package/Bizox/index.html';
+
+        function redirect() {
+            loader.classList.add('fade-out');
+            setTimeout(() => { window.location.href = dest; }, 820);
+        }
+
+        // Update progress bar as video plays
+        video.addEventListener('timeupdate', () => {
+            if (video.duration) {
+                progress.style.width = (video.currentTime / video.duration * 100) + '%';
+            }
+        });
+
+        // Redirect when video ends
+        video.addEventListener('ended', redirect);
+
+        // Fallback: if video fails to load/play, redirect after 4 seconds
+        video.addEventListener('error', () => setTimeout(redirect, 4000));
+        setTimeout(() => {
+            if (video.readyState === 0) redirect();
+        }, 5000);
+    </script>
+
+</body>
+</html>
